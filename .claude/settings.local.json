@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(start \"\" \"C:\\\\Users\\\\Admin\\\\Desktop\\\\demo website clinic\\\\index.html\")",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)"
+    ]
+  }
+}
