@@ -36,6 +36,11 @@
 html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
+body.menu-open {
+    overflow: hidden;
 }
 
 body {
@@ -223,7 +228,16 @@ h3 {
     width: 24px;
     height: 2px;
     background: var(--color-text);
-    transition: 0.2s;
+    transition: 0.3s;
+    transform-origin: center;
+}
+
+.menu-toggle.active span:first-child {
+    transform: translateY(4px) rotate(45deg);
+}
+
+.menu-toggle.active span:last-child {
+    transform: translateY(-4px) rotate(-45deg);
 }
 
 /* Hero */
@@ -695,7 +709,22 @@ h3 {
     height: 28px;
 }
 
-/* Responsive */
+/* Mobile menu overlay */
+.nav-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 99;
+}
+
+.nav-overlay.active {
+    display: block;
+}
+
+/* ===== Responsive ===== */
+
+/* Tablet landscape */
 @media (max-width: 1024px) {
     .hero .container {
         grid-template-columns: 1fr;
@@ -739,32 +768,47 @@ h3 {
     }
 }
 
+/* Tablet portrait & mobile */
 @media (max-width: 768px) {
     :root {
         --space-xl: 3rem;
         --space-2xl: 4rem;
     }
 
+    /* Mobile nav: slide-down with transition */
     .nav {
-        display: none;
         position: fixed;
         top: 72px;
         left: 0;
         right: 0;
         background: var(--color-bg);
         flex-direction: column;
-        padding: var(--space-md);
+        padding: 0 var(--space-md);
         border-bottom: 1px solid var(--color-border);
         gap: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.35s ease, padding 0.35s ease;
+        display: flex;
+        z-index: 101;
     }
 
     .nav.active {
-        display: flex;
+        max-height: 350px;
+        padding: var(--space-xs) var(--space-md) var(--space-md);
     }
 
     .nav a {
-        padding: var(--space-sm) 0;
+        padding: 0.875rem 0;
         border-bottom: 1px solid var(--color-border);
+        font-size: 1rem;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+
+    .nav a:last-child {
+        border-bottom: none;
     }
 
     .header-cta {
@@ -773,10 +817,15 @@ h3 {
 
     .menu-toggle {
         display: flex;
+        min-width: 44px;
+        min-height: 44px;
+        align-items: center;
+        justify-content: center;
     }
 
     .trust .container {
         flex-direction: column;
+        align-items: center;
         gap: var(--space-md);
     }
 
@@ -796,10 +845,16 @@ h3 {
 
     .clinic-gallery {
         grid-template-columns: 1fr;
+        grid-template-rows: auto;
     }
 
     .clinic-photo-large {
         grid-column: span 1;
+    }
+
+    .clinic-photo,
+    .clinic-photo-large {
+        height: 220px;
     }
 
     .reviews-grid {
@@ -811,6 +866,13 @@ h3 {
         gap: var(--space-xl);
     }
 
+    /* Prevent iOS zoom on input focus (font must be >= 16px) */
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 1rem;
+    }
+
     .footer-main {
         flex-direction: column;
         gap: var(--space-lg);
@@ -818,13 +880,47 @@ h3 {
 
     .footer-nav {
         flex-wrap: wrap;
-        gap: var(--space-md);
+        gap: var(--space-sm) var(--space-md);
+    }
+
+    .footer-nav a {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
     }
 }
 
+/* Small phones */
 @media (max-width: 480px) {
+    :root {
+        --space-md: 1.25rem;
+        --space-lg: 2rem;
+        --space-xl: 2.5rem;
+        --space-2xl: 3rem;
+    }
+
+    .container {
+        padding: 0 var(--space-sm);
+    }
+
     h1 {
         font-size: 1.75rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    .header .container {
+        height: 64px;
+    }
+
+    .hero {
+        padding: calc(64px + var(--space-xl)) 0 var(--space-xl);
+    }
+
+    .nav {
+        top: 64px;
     }
 
     .hero-actions {
@@ -842,5 +938,60 @@ h3 {
 
     .service-item {
         padding: var(--space-md);
+    }
+
+    .review {
+        padding: var(--space-md);
+    }
+
+    .contact-form {
+        padding: var(--space-md);
+    }
+
+    .clinic-photo,
+    .clinic-photo-large {
+        height: 180px;
+    }
+
+    .whatsapp {
+        width: 48px;
+        height: 48px;
+        bottom: var(--space-sm);
+        right: var(--space-sm);
+    }
+
+    .whatsapp svg {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+/* Very small phones (320px) */
+@media (max-width: 360px) {
+    .container {
+        padding: 0 0.75rem;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.875rem;
+    }
+
+    .logo-text {
+        font-size: 0.875rem;
+    }
+
+    .logo-mark {
+        width: 36px;
+        height: 36px;
+        font-size: 0.875rem;
+    }
+
+    .trust-item strong {
+        font-size: 1.5rem;
     }
 }

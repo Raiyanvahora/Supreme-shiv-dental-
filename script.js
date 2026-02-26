@@ -5,30 +5,68 @@ document.addEventListener('DOMContentLoaded', function() {
     const menuToggle = document.getElementById('menu-toggle');
     const nav = document.getElementById('nav');
 
+    // Create overlay for closing menu on outside tap
+    const overlay = document.createElement('div');
+    overlay.className = 'nav-overlay';
+    document.body.appendChild(overlay);
+
+    function openMenu() {
+        nav.classList.add('active');
+        menuToggle.classList.add('active');
+        overlay.classList.add('active');
+        document.body.classList.add('menu-open');
+    }
+
+    function closeMenu() {
+        nav.classList.remove('active');
+        menuToggle.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.classList.remove('menu-open');
+    }
+
     if (menuToggle && nav) {
         menuToggle.addEventListener('click', function() {
-            nav.classList.toggle('active');
+            if (nav.classList.contains('active')) {
+                closeMenu();
+            } else {
+                openMenu();
+            }
         });
 
         // Close menu when clicking a link
-        nav.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                nav.classList.remove('active');
-            });
+        nav.querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', closeMenu);
+        });
+
+        // Close menu when tapping overlay
+        overlay.addEventListener('click', closeMenu);
+
+        // Close menu on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && nav.classList.contains('active')) {
+                closeMenu();
+            }
         });
     }
 
+    // Close menu on resize to desktop
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768 && nav.classList.contains('active')) {
+            closeMenu();
+        }
+    });
+
     // Smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
         anchor.addEventListener('click', function(e) {
-            const href = this.getAttribute('href');
+            var href = this.getAttribute('href');
             if (href === '#') return;
 
-            const target = document.querySelector(href);
+            var target = document.querySelector(href);
             if (target) {
                 e.preventDefault();
-                const headerHeight = document.querySelector('.header').offsetHeight;
-                const targetPosition = target.offsetTop - headerHeight;
+                var headerHeight = document.querySelector('.header').offsetHeight;
+                var targetPosition = target.offsetTop - headerHeight;
 
                 window.scrollTo({
                     top: targetPosition,
@@ -39,13 +77,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Form handling
-    const form = document.getElementById('contact-form');
+    var form = document.getElementById('contact-form');
     if (form) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const name = form.querySelector('#name').value.trim();
-            const phone = form.querySelector('#phone').value.trim();
+            var name = form.querySelector('#name').value.trim();
+            var phone = form.querySelector('#phone').value.trim();
 
             if (!name || !phone) {
                 alert('Please fill in your name and phone number.');
